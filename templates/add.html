@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adicionar Carro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #000080; /* navy blue */
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Car silhouette background */
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            height: 150px;
+            background:
+                /* Car body */
+                radial-gradient(ellipse at 30% 70%, #ff6b35 0%, #ff6b35 20%, transparent 21%),
+                radial-gradient(ellipse at 70% 70%, #ff6b35 0%, #ff6b35 20%, transparent 21%),
+                linear-gradient(45deg, #ff4757 0%, #ff3838 50%, #ff4757 100%),
+                /* Windows */
+                linear-gradient(90deg, transparent 20%, rgba(135, 206, 235, 0.3) 20%, rgba(135, 206, 235, 0.3) 80%, transparent 80%),
+                /* Wheels */
+                radial-gradient(circle at 25% 85%, #333 0%, #333 15%, transparent 16%),
+                radial-gradient(circle at 75% 85%, #333 0%, #333 15%, transparent 16%),
+                /* Headlights */
+                radial-gradient(circle at 15% 50%, #fff 0%, #fff 5%, transparent 6%),
+                radial-gradient(circle at 85% 50%, #fff 0%, #fff 5%, transparent 6%);
+            border-radius: 20px 20px 10px 10px;
+            opacity: 0.08;
+            transform: rotate(-5deg);
+            z-index: -1;
+            animation: car-float 8s ease-in-out infinite;
+        }
+
+        @keyframes car-float {
+            0%, 100% { transform: rotate(-5deg) translateY(0px); }
+            50% { transform: rotate(-3deg) translateY(-10px); }
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            padding: 50px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #1e3c72;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 2em;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            color: #1e3c72;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 1.05em;
+        }
+
+        input[type="text"],
+        input[type="file"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+            font-family: inherit;
+        }
+
+        input[type="text"]:focus,
+        input[type="file"]:focus {
+            outline: none;
+            border-color: #f5576c;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .file-input-label {
+            display: inline-block;
+            padding: 12px 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .file-input-label:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .file-name {
+            margin-top: 8px;
+            font-size: 0.9em;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .file-preview {
+            margin-top: 15px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
+        }
+
+        .preview-item {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #f0f0f0;
+        }
+
+        .preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .preview-count {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #f5576c;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 40px;
+        }
+
+        button {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.05em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(245, 87, 108, 0.3);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .btn-back {
+            background: #f0f0f0;
+            color: #1e3c72;
+        }
+
+        .btn-back:hover {
+            background: #e0e0e0;
+        }
+
+        .form-group a {
+            text-decoration: none;
+        }
+
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .btn-submit.loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .success-message {
+            display: none;
+            background: #4caf50;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            animation: slideIn 0.3s ease;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="success-message" id="successMessage">
+            ✓ Carro adicionado com sucesso! Redirecionando...
+        </div>
+
+        <h1>🏎️ Adicionar Novo Carro</h1>
+
+        <form id="addForm" action="/add" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="name">Nome do Carro</label>
+                <input type="text" id="name" name="name" placeholder="Ex: Corvette Stingray" required>
+            </div>
+
+            <div class="form-group">
+                <label for="series">Série do Veículo</label>
+                <input type="text" id="series" name="series" placeholder="Ex: Muscle Mania" required>
+            </div>
+
+            <div class="form-group">
+                <label for="code">Número de registro/certificação INMETRO</label>
+                <input type="text" id="code" name="code" placeholder="Ex: HW2024-001" required>
+            </div>
+
+            <div class="form-group">
+                <label for="scale">Escala</label>
+                <input type="text" id="scale" name="scale" value="1:64" placeholder="Ex: 1:64" required>
+            </div>
+
+            <div class="form-group">
+                <label for="color">Cor</label>
+                <input type="text" id="color" name="color" placeholder="Ex: Vermelho, Azul, Verde..." required>
+            </div>
+
+            <div class="form-group">
+                <label for="images">Fotos do Carro (pode selecionar múltiplas)</label>
+                <div class="file-input-wrapper">
+                    <label for="images" class="file-input-label">Selecionar Imagens</label>
+                    <input type="file" id="images" name="images" accept="image/*" multiple required>
+                </div>
+                <div class="file-name" id="fileName"></div>
+                <div class="file-preview" id="filePreview"></div>
+            </div>
+
+            <div class="buttons">
+                <button type="submit" class="btn-submit" id="submitBtn">
+                    <span id="submitText">Adicionar</span>
+                    <div class="spinner" id="spinner"></div>
+                </button>
+                <a href="/"><button type="button" class="btn-back">Cancelar</button></a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Mostrar nome e preview dos arquivos selecionados
+        const imageInput = document.getElementById('images');
+        const fileName = document.getElementById('fileName');
+        const filePreview = document.getElementById('filePreview');
+
+        imageInput.addEventListener('change', function() {
+            filePreview.innerHTML = '';
+            if (this.files && this.files.length > 0) {
+                fileName.textContent = '📸 ' + this.files.length + ' imagem(ns) selecionada(s)';
+                
+                // Mostrar preview das imagens
+                Array.from(this.files).forEach((file, index) => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const previewDiv = document.createElement('div');
+                        previewDiv.className = 'preview-item';
+                        previewDiv.innerHTML = `
+                            <img src="${e.target.result}" alt="Preview ${index + 1}">
+                            <div class="preview-count">${index + 1}</div>
+                        `;
+                        filePreview.appendChild(previewDiv);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+        });
+
+        // Mostrar feedback ao submeter
+        const form = document.getElementById('addForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const successMessage = document.getElementById('successMessage');
+
+        form.addEventListener('submit', function(e) {
+            submitBtn.disabled = true;
+            document.getElementById('submitText').textContent = 'Salvando...';
+            document.getElementById('spinner').style.display = 'block';
+            
+            // Mostrar mensagem de sucesso
+            setTimeout(() => {
+                successMessage.classList.add('show');
+            }, 300);
+        });
+    </script>
+</body>
+</html>

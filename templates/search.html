@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados da Busca</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #000080; /* navy blue */
+            min-height: 100vh;
+            padding: 40px 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Car silhouette background */
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            height: 150px;
+            background:
+                /* Car body */
+                radial-gradient(ellipse at 30% 70%, #ff6b35 0%, #ff6b35 20%, transparent 21%),
+                radial-gradient(ellipse at 70% 70%, #ff6b35 0%, #ff6b35 20%, transparent 21%),
+                linear-gradient(45deg, #ff4757 0%, #ff3838 50%, #ff4757 100%),
+                /* Windows */
+                linear-gradient(90deg, transparent 20%, rgba(135, 206, 235, 0.3) 20%, rgba(135, 206, 235, 0.3) 80%, transparent 80%),
+                /* Wheels */
+                radial-gradient(circle at 25% 85%, #333 0%, #333 15%, transparent 16%),
+                radial-gradient(circle at 75% 85%, #333 0%, #333 15%, transparent 16%),
+                /* Headlights */
+                radial-gradient(circle at 15% 50%, #fff 0%, #fff 5%, transparent 6%),
+                radial-gradient(circle at 85% 50%, #fff 0%, #fff 5%, transparent 6%);
+            border-radius: 20px 20px 10px 10px;
+            opacity: 0.08;
+            transform: rotate(-5deg);
+            z-index: -1;
+            animation: car-float 8s ease-in-out infinite;
+        }
+
+        @keyframes car-float {
+            0%, 100% { transform: rotate(-5deg) translateY(0px); }
+            50% { transform: rotate(-3deg) translateY(-10px); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        h1 {
+            color: white;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .btn-back {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .btn-back:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .cars-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .car-image-container {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+        }
+
+        .car-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .image-nav {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 5px;
+            z-index: 2;
+        }
+
+        .image-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .image-dot.active {
+            background: white;
+            transform: scale(1.3);
+        }
+
+        .image-counter {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+            z-index: 2;
+        }
+
+        .car-image-nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 2;
+        }
+
+        .car-image-nav-btn:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .car-image-nav-btn.prev {
+            left: 5px;
+        }
+
+        .car-image-nav-btn.next {
+            right: 5px;
+        }
+
+        .car-info {
+            padding: 20px;
+            flex-grow: 1;
+        }
+
+        .car-info h3 {
+            color: #1e3c72;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .car-info p {
+            color: #666;
+            margin: 8px 0;
+            font-size: 0.95em;
+        }
+
+        .car-series {
+            background: #f5f5f5;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            color: #f5576c;
+        }
+
+        .car-color {
+            background: #f5f5f5;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .car-code {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .car-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding: 0 20px 20px 20px;
+            border-top: 1px solid #f0f0f0;
+            padding-top: 15px;
+        }
+
+        .btn-card {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9em;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-edit {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-edit:hover {
+            transform: scale(1.03);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, #f44336 0%, #da190b 100%);
+            color: white;
+        }
+
+        .btn-delete:hover {
+            transform: scale(1.03);
+            box-shadow: 0 5px 15px rgba(244, 67, 54, 0.3);
+        }
+
+        .empty-state {
+            text-align: center;
+            color: white;
+            padding: 80px 20px;
+        }
+
+        .empty-state h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .empty-state p {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+
+        .results-info {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Resultados da Busca</h1>
+            <a href="/" class="btn-back">← Voltar</a>
+        </header>
+
+        {% if cars %}
+            <div class="results-info">
+                <p>Encontrados {{ cars|length }} carro(s)</p>
+            </div>
+            <div class="cars-grid">
+                {% for car in cars %}
+                    <div class="car-card">
+                        <div class="car-image-container">
+                            <img src="/{{car.images[0]}}" alt="{{car.name}}" class="car-image" id="img-{{car.id}}">
+                            {% if car.images|length > 1 %}
+                                <div class="image-counter">1/{{car.images|length}}</div>
+                                <button class="car-image-nav-btn prev" onclick="prevImage('{{car.id}}')">❮</button>
+                                <button class="car-image-nav-btn next" onclick="nextImage('{{car.id}}')">❯</button>
+                                <div class="image-nav" id="dots-{{car.id}}">
+                                    {% for image in car.images %}
+                                        <span class="image-dot{% if loop.first %} active{% endif %}" onclick="showImage('{{car.id}}', {{loop.index0}})"></span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="car-info">
+                            <h3>{{car.name}}</h3>
+                            <p class="car-series">Série do Veículo: {{car.series}}</p>
+                            <p class="car-color">Cor: {{car.color}}</p>
+                            <p class="car-code">Nº INMETRO: {{car.code}}</p>
+                        </div>
+                        <div class="car-actions">
+                            <a href="/edit/{{car.id}}" class="btn-card btn-edit">✏️ Editar</a>
+                            <a href="/delete/{{car.id}}" class="btn-card btn-delete" onclick="return confirm('Tem certeza que deseja deletar este carro?');">🗑️ Deletar</a>
+                        </div>
+                    </div>
+                    <script>
+                        window["images_{{car.id}}"] = {{car.images|tojson}};
+                        window["currentIndex_{{car.id}}"] = 0;
+                    </script>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <h2>😕 Nenhum carro encontrado</h2>
+                <p>Tente uma nova busca ou <a href="/" style="color: #f5576c;">volte ao catálogo</a></p>
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function showImage(carId, index) {
+            const images = window[`images_${carId}`];
+            window[`currentIndex_${carId}`] = index;
+            
+            const img = document.getElementById(`img-${carId}`);
+            img.src = '/' + images[index];
+            
+            // Atualizar contador
+            const counter = img.parentElement.querySelector('.image-counter');
+            if (counter) {
+                counter.textContent = (index + 1) + '/' + images.length;
+            }
+            
+            // Atualizar pontos
+            const dots = document.querySelectorAll(`#dots-${carId} .image-dot`);
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === index);
+            });
+        }
+
+        function nextImage(carId) {
+            const images = window[`images_${carId}`];
+            const currentIndex = window[`currentIndex_${carId}`];
+            const nextIndex = (currentIndex + 1) % images.length;
+            showImage(carId, nextIndex);
+        }
+
+        function prevImage(carId) {
+            const images = window[`images_${carId}`];
+            const currentIndex = window[`currentIndex_${carId}`];
+            const prevIndex = (currentIndex - 1 + images.length) % images.length;
+            showImage(carId, prevIndex);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+{
+  "cars": [
+    {
+      "name": "Fusca Bumblebee Transformers Htf09",
+      "series": "HW Screen Time",
+      "code": "004644/2021",
+      "scale": "1:64",
+      "images": [
+        "images/Bumblebee.png"
+      ],
+      "id": "05ef13de-9b28-459b-bb15-3bfa6d6e5e21",
+      "color": "Dourado"
+    },
+    {
+      "name": "Custom 62 Chevy Pickup Surf S Up Silver Series Cor Amarelo",
+      "series": "Silver Series",
+      "code": "004644/2021",
+      "scale": "1:64",
+      "images": [
+        "images/Custom 62 Chevy Pickup Surf S Up Silver Series Cor Amarelo.png"
+      ],
+      "id": "f8ed0d2f-41b4-43b1-9a8a-e201c2cbd822",
+      "color": "Amarelo"
+    }
+  ]
+}

@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Carro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #000080; /* navy blue */
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Car silhouette background */
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            height: 150px;
+            background:
+                /* Car body */
+                radial-gradient(ellipse at 30% 70%, #ff6b35 0%, #ff6b35 20%, transparent 21%),
+                radial-gradient(ellipse at 70% 70%, #ff6b35 0%, #ff6b35 20%, transparent 21%),
+                linear-gradient(45deg, #ff4757 0%, #ff3838 50%, #ff4757 100%),
+                /* Windows */
+                linear-gradient(90deg, transparent 20%, rgba(135, 206, 235, 0.3) 20%, rgba(135, 206, 235, 0.3) 80%, transparent 80%),
+                /* Wheels */
+                radial-gradient(circle at 25% 85%, #333 0%, #333 15%, transparent 16%),
+                radial-gradient(circle at 75% 85%, #333 0%, #333 15%, transparent 16%),
+                /* Headlights */
+                radial-gradient(circle at 15% 50%, #fff 0%, #fff 5%, transparent 6%),
+                radial-gradient(circle at 85% 50%, #fff 0%, #fff 5%, transparent 6%);
+            border-radius: 20px 20px 10px 10px;
+            opacity: 0.08;
+            transform: rotate(-5deg);
+            z-index: -1;
+            animation: car-float 8s ease-in-out infinite;
+        }
+
+        @keyframes car-float {
+            0%, 100% { transform: rotate(-5deg) translateY(0px); }
+            50% { transform: rotate(-3deg) translateY(-10px); }
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            padding: 50px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #1e3c72;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 2em;
+        }
+
+        .car-preview {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .car-preview img {
+            max-width: 150px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            color: #1e3c72;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 1.05em;
+        }
+
+        input[type="text"],
+        input[type="file"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+            font-family: inherit;
+        }
+
+        input[type="text"]:focus,
+        input[type="file"]:focus {
+            outline: none;
+            border-color: #f5576c;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .file-input-label {
+            display: inline-block;
+            padding: 12px 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .file-input-label:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .file-name {
+            margin-top: 8px;
+            font-size: 0.9em;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 40px;
+        }
+
+        button, a {
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.05em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+            color: white;
+            grid-column: span 2;
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-back {
+            background: #f0f0f0;
+            color: #1e3c72;
+        }
+
+        .btn-back:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, #f44336 0%, #da190b 100%);
+            color: white;
+        }
+
+        .btn-delete:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(244, 67, 54, 0.3);
+        }
+
+        .danger-zone {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #ffebee;
+        }
+
+        .danger-title {
+            color: #f44336;
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 0.95em;
+        }
+
+        .delete-btn-container {
+            margin-top: 20px;
+        }
+
+        .delete-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #f44336 0%, #da190b 100%);
+            color: white;
+        }
+
+        .delete-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(244, 67, 54, 0.3);
+        }
+
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .btn-submit.loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .back-btn-top {
+            padding: 8px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.95em;
+        }
+
+        .back-btn-top:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .file-preview {
+            margin-top: 15px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
+        }
+
+        .preview-item {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #f0f0f0;
+        }
+
+        .preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .preview-count {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #f5576c;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .delete-image-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #f44336;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .delete-image-btn:hover {
+            background: #da190b;
+            transform: scale(1.1);
+        }
+
+        .preview-item.deleted {
+            opacity: 0.5;
+            background: #f0f0f0;
+        }
+
+        .preview-item.deleted img {
+            opacity: 0.5;
+        }
+
+        .current-images {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .current-images h4 {
+            color: #1e3c72;
+            margin-bottom: 10px;
+            font-size: 0.95em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✏️ Editar Carro</h1>
+            <a href="/" class="back-btn-top">← Voltar</a>
+        </div>
+
+        <div class="car-preview">
+            <img src="/{{car.images[0]}}" alt="{{car.name}}">
+        </div>
+
+        <div class="current-images">
+            <h4>📸 Imagens Atuais:</h4>
+            <div class="file-preview" id="currentImagesPreview">
+                {% for image in car.images %}
+                    <div class="preview-item" data-image="{{image}}">
+                        <img src="/{{image}}" alt="{{car.name}}">
+                        <button type="button" class="delete-image-btn" onclick="deleteCurrentImage(this)" title="Deletar imagem">✕</button>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <form id="editForm" action="/edit/{{car.id}}" method="post" enctype="multipart/form-data">
+            <input type="hidden" id="imagesToDelete" name="images_to_delete" value="">
+            <div class="form-group">
+                <label for="name">Nome do Carro</label>
+                <input type="text" id="name" name="name" value="{{car.name}}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="series">Série do Veículo</label>
+                <input type="text" id="series" name="series" value="{{car.series}}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="code">Número de registro/certificação INMETRO</label>
+                <input type="text" id="code" name="code" value="{{car.code}}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="scale">Escala</label>
+                <input type="text" id="scale" name="scale" value="{{car.scale | default('1:64')}}" placeholder="Ex: 1:64">
+            </div>
+
+            <div class="form-group">
+                <label for="color">Cor</label>
+                <input type="text" id="color" name="color" value="{{car.color}}" placeholder="Ex: Vermelho, Azul, Verde...">
+            </div>
+
+            <div class="form-group">
+                <label for="images">Novas Fotos do Carro (opcional - deixe em branco para manter as atuais)</label>
+                <div class="file-input-wrapper">
+                    <label for="images" class="file-input-label">Selecionar Imagens</label>
+                    <input type="file" id="images" name="images" accept="image/*" multiple>
+                </div>
+                <div class="file-name" id="fileName"></div>
+                <div class="file-preview" id="filePreview"></div>
+            </div>
+
+            <div class="buttons">
+                <button type="submit" class="btn-submit" id="submitBtn">
+                    <span id="submitText">Salvar Alterações</span>
+                    <div class="spinner" id="spinner"></div>
+                </button>
+                <a href="/" class="btn-back">← Cancelar</a>
+            </div>
+
+            <div class="danger-zone">
+                <div class="danger-title">⚠️ Zona de Perigo</div>
+                <p style="color: #666; font-size: 0.9em; margin-bottom: 15px;">
+                    Esta ação é irreversível. O registro será permanentemente deletado.
+                </p>
+                <a href="/delete/{{car.id}}" class="delete-btn" onclick="return confirm('Tem certeza que deseja deletar este carro? Esta ação não pode ser desfeita.');">
+                    🗑️ Deletar Carro
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Rastrear imagens deletadas
+        const deletedImages = [];
+
+        function deleteCurrentImage(btn) {
+            const previewItem = btn.parentElement;
+            const imagePath = previewItem.getAttribute('data-image');
+            
+            previewItem.classList.toggle('deleted');
+            
+            if (previewItem.classList.contains('deleted')) {
+                if (!deletedImages.includes(imagePath)) {
+                    deletedImages.push(imagePath);
+                }
+            } else {
+                const index = deletedImages.indexOf(imagePath);
+                if (index > -1) {
+                    deletedImages.splice(index, 1);
+                }
+            }
+            
+            // Atualizar campo hidden
+            document.getElementById('imagesToDelete').value = deletedImages.join('|');
+        }
+
+        // Mostrar nome e preview dos arquivos selecionados
+        const imageInput = document.getElementById('images');
+        const fileName = document.getElementById('fileName');
+        const filePreview = document.getElementById('filePreview');
+
+        imageInput.addEventListener('change', function() {
+            filePreview.innerHTML = '';
+            if (this.files && this.files.length > 0) {
+                fileName.textContent = '📸 ' + this.files.length + ' imagem(ns) selecionada(s)';
+                
+                // Mostrar preview das imagens
+                Array.from(this.files).forEach((file, index) => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const previewDiv = document.createElement('div');
+                        previewDiv.className = 'preview-item';
+                        previewDiv.innerHTML = `
+                            <img src="${e.target.result}" alt="Preview ${index + 1}">
+                            <div class="preview-count">${index + 1}</div>
+                        `;
+                        filePreview.appendChild(previewDiv);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+        });
+
+        // Mostrar feedback ao submeter
+        const form = document.getElementById('editForm');
+        const submitBtn = document.getElementById('submitBtn');
+
+        form.addEventListener('submit', function(e) {
+            submitBtn.disabled = true;
+            document.getElementById('submitText').textContent = 'Salvando...';
+            document.getElementById('spinner').style.display = 'block';
+        });
+    </script>
+</body>
+</html>
